@@ -1,6 +1,7 @@
 import express, { Application, json, Request, Response } from "express";
 import cors from "cors";
 import { config } from "dotenv";
+import mongoose from "mongoose";
 
 class App {
 
@@ -24,7 +25,18 @@ class App {
         this.routes()
     }
 
-    private database(): void {}
+    private database(): void {
+        mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}` + 
+        `@${process.env.MONGO_CLUSTER}/${process.env.MONGO_DB}?retryWrites=true&w=majority`, {
+            useCreateIndex: true,
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }, (err) => {
+            if(!err) {
+                console.log('connected to database!')
+            }
+        })
+    }
 
     private middlewares(): void {
         this.app.use(cors());

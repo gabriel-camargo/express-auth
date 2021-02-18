@@ -25,6 +25,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importStar(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = require("dotenv");
+const mongoose_1 = __importDefault(require("mongoose"));
 class App {
     constructor() {
         var _a;
@@ -37,7 +38,18 @@ class App {
         this.middlewares();
         this.routes();
     }
-    database() { }
+    database() {
+        mongoose_1.default.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}` +
+            `@${process.env.MONGO_CLUSTER}/${process.env.MONGO_DB}?retryWrites=true&w=majority`, {
+            useCreateIndex: true,
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }, (err) => {
+            if (!err) {
+                console.log('connected to database!');
+            }
+        });
+    }
     middlewares() {
         this.app.use(cors_1.default());
         this.app.use(express_1.json());
