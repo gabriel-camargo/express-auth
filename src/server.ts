@@ -2,12 +2,17 @@ import express, { Application, json, Request, Response } from "express";
 import cors from "cors";
 import { config } from "dotenv";
 import mongoose from "mongoose";
+import { TestRoutes } from "./routes/test_routes";
+import { CommonRoutes } from "./routes/common_routes";
 
 class App {
 
     public app: Application
     public port: string | number
     public mode: string
+
+    private testRoutes: TestRoutes = new TestRoutes()
+    private commonRoutes: CommonRoutes = new CommonRoutes()
 
     private isDev: boolean
 
@@ -34,7 +39,7 @@ class App {
         }, (err) => {
             if(!err) {
                 console.log('connected to database!')
-            }
+            } 
         })
     }
 
@@ -44,9 +49,8 @@ class App {
     }
 
     private routes(): void {
-        this.app.get("/", (_req: Request, res: Response) => {
-            return res.json("API Running 😎");
-        });
+        this.testRoutes.route(this.app)
+        this.commonRoutes.route(this.app)
     }
 }
 
