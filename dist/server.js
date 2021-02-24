@@ -26,13 +26,13 @@ const express_1 = __importStar(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = require("dotenv");
 const mongoose_1 = __importDefault(require("mongoose"));
-const test_routes_1 = require("./routes/test_routes");
 const common_routes_1 = require("./routes/common_routes");
+const user_routes_1 = require("./routes/user_routes");
 class App {
     constructor() {
         var _a;
-        this.testRoutes = new test_routes_1.TestRoutes();
         this.commonRoutes = new common_routes_1.CommonRoutes();
+        this.userRoutes = new user_routes_1.UserRoutes();
         dotenv_1.config();
         this.app = express_1.default();
         this.port = process.env.PORT || 5000;
@@ -59,7 +59,7 @@ class App {
         this.app.use(express_1.json());
     }
     routes() {
-        this.testRoutes.route(this.app);
+        this.userRoutes.route(this.app);
         this.commonRoutes.route(this.app);
     }
 }
