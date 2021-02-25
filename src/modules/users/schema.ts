@@ -12,8 +12,7 @@ const schema = new Schema({
         }
     },
     email: String,
-    phone_number: String,
-    gender: String,
+    password: String,
     is_deleted: {
         type: Boolean,
         default: false

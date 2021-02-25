@@ -1,16 +1,25 @@
 import { IUser } from './model';
 import users from './schema';
+import * as bcrypt from "bcryptjs";
 
 export default class UserService {
     
-    public createUser(user_params: IUser, callback: any) {
+    static createUser(user_params: IUser, callback: any) {
         const _session = new users(user_params);
         _session.save(callback);
     }
 
-    public filterUser(query: any, callback: any) {
+    static hashPassword(password: string): string {
+        return bcrypt.hashSync(password, 8);
+    }
+
+    static filterUser(query: any, callback: any) {
         users.findOne(query, callback);
     }
+
+    static isPasswordValid(password: string, hash: string) {
+        return bcrypt.compareSync(password, hash);
+      }
 
     public updateUser(user_params: IUser, callback: any) {
         const query = { _id: user_params._id };

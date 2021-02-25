@@ -2,17 +2,14 @@ import express, { Application, json, Request, Response } from "express";
 import cors from "cors";
 import { config } from "dotenv";
 import mongoose from "mongoose";
-import { CommonRoutes } from "./routes/common_routes";
-import { UserRoutes } from "./routes/user_routes";
+import { authRouter } from "./routes/auth";
+import { commonRouter } from "./routes/common";
 
 class App {
 
     public app: Application
     public port: string | number
     public mode: string
-
-    private commonRoutes: CommonRoutes = new CommonRoutes()
-    private userRoutes: UserRoutes = new UserRoutes()
 
     private isDev: boolean
 
@@ -49,9 +46,8 @@ class App {
     }
 
     private routes(): void {
-        this.userRoutes.route(this.app)
-
-        this.commonRoutes.route(this.app)
+        authRouter.route(this.app)
+        commonRouter.route(this.app)
     }
 }
 

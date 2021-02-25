@@ -1,6 +1,6 @@
 import { Application, Request, Response } from 'express';
 
-export class CommonRoutes {
+class CommonRoutes {
 
   public route(app: Application) {
 
@@ -10,3 +10,5 @@ export class CommonRoutes {
 
   }
 }
+
+export const commonRouter = new CommonRoutes()

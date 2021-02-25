@@ -19,22 +19,30 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose = __importStar(require("mongoose"));
-const Schema = mongoose.Schema;
-const schema = new Schema({
-    name: {
-        type: {
-            first_name: String,
-            middle_name: String,
-            last_name: String
-        }
-    },
-    email: String,
-    password: String,
-    is_deleted: {
-        type: Boolean,
-        default: false
-    },
-    modification_notes: Array()
-});
-exports.default = mongoose.model('users', schema);
+exports.checkJwt = void 0;
+const jwt = __importStar(require("jsonwebtoken"));
+const checkJwt = (req, res, next) => {
+    var _a, _b;
+    const token = (_a = req.headers["authorization"]) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
+    const jwtSecret = (_b = process.env.SECRET) !== null && _b !== void 0 ? _b : '';
+    let jwtPayload;
+    try {
+        jwtPayload = jwt.verify(token, jwtSecret);
+        res.locals.jwtPayload = jwtPayload;
+    }
+    catch (error) {
+        res.status(401).send();
+        return;
+    }
+    const { userId, username } = jwtPayload;
+    console.log('opa', userId, username);
+    const newToken = jwt.sign({
+        userId,
+        username
+    }, jwtSecret, {
+        expiresIn: "1h"
+    });
+    res.setHeader("token", newToken);
+    next();
+};
+exports.checkJwt = checkJwt;
