@@ -4,9 +4,10 @@ import * as bcrypt from "bcryptjs";
 
 export default class UserService {
     
-    static createUser(user_params: IUser, callback: any) {
-        const _session = new users(user_params);
-        _session.save(callback);
+    static async createUser(user_params: IUser) {
+        const session = new users(user_params);
+        const user = await session.save();
+        return user
     }
 
     static hashPassword(password: string): string {

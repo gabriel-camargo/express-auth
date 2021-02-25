@@ -85,13 +85,16 @@ AuthController.signUp = (req, res) => __awaiter(void 0, void 0, void 0, function
             }]
     };
     user_params.password = service_2.default.hashPassword(user_params.password);
-    service_2.default.createUser(user_params, (err, user_data) => {
-        if (err) {
-            service_1.mongoError(err, res);
-        }
-        else {
-            service_1.successResponse('create user successfull', user_data, res);
-        }
-    });
+    try {
+        const newUser = yield service_2.default.createUser(user_params);
+        service_1.successResponse('create user successfull (async)', newUser, res);
+    }
+    catch (error) {
+        console.log('error', error);
+        res.status(500).send({
+            'error': true,
+            'message': 'error'
+        });
+    }
 });
 exports.default = AuthController;

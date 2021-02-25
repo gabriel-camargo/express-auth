@@ -2,35 +2,35 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoError = exports.insufficientParameters = exports.failureResponse = exports.successResponse = void 0;
 const model_1 = require("./model");
-function successResponse(message, DATA, res) {
+function successResponse(message, data, res) {
     res.status(model_1.response_status_codes.success).json({
-        STATUS: 'SUCCESS',
-        MESSAGE: message,
-        DATA
+        status: 'SUCCESS',
+        message: message,
+        data
     });
 }
 exports.successResponse = successResponse;
-function failureResponse(message, DATA, res) {
+function failureResponse(message, data, res) {
     res.status(model_1.response_status_codes.bad_request).json({
-        STATUS: 'FAILURE',
-        MESSAGE: message,
-        DATA
+        status: 'FAILURE',
+        message: message,
+        data
     });
 }
 exports.failureResponse = failureResponse;
 function insufficientParameters(res) {
     res.status(model_1.response_status_codes.bad_request).json({
-        STATUS: 'FAILURE',
-        MESSAGE: 'Insufficient parameters',
-        DATA: {}
+        status: 'FAILURE',
+        message: 'Insufficient parameters',
+        data: {}
     });
 }
 exports.insufficientParameters = insufficientParameters;
 function mongoError(err, res) {
     res.status(model_1.response_status_codes.internal_server_error).json({
-        STATUS: 'FAILURE',
-        MESSAGE: 'MongoDB error',
-        DATA: err
+        status: 'FAILURE',
+        message: 'MongoDB error',
+        data: err
     });
 }
 exports.mongoError = mongoError;

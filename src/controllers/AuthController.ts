@@ -59,13 +59,18 @@ class AuthController {
 
         user_params.password = UserService.hashPassword(user_params.password)
 
-        UserService.createUser(user_params, (err: any, user_data: IUser) => {
-            if (err) {
-                mongoError(err, res);
-            } else {
-                successResponse('create user successfull', user_data, res);
-            }
-        });
+        try {
+            const newUser = await UserService.createUser(user_params)
+
+            successResponse('create user successfull (async)', newUser, res);
+
+        } catch (error) {
+            console.log('error', error)
+            res.status(500).send({
+                'error': true,
+                'message': 'error'
+            })
+        }
     };
 
     static dashboard(req: Request, res: Response) {
