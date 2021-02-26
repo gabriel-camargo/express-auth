@@ -3,47 +3,51 @@ import {
     Response
 } from "express";
 import * as jwt from "jsonwebtoken";
-import { mongoError, successResponse } from "./../modules/common/service";
+import { mongoError } from "./../modules/common/service";
 import { IUser } from "./../modules/users/model";
 import UserService from "./../modules/users/service";
 
 class AuthController {
     static signIn = async (req: Request, res: Response) => {
-        //Check if username and password are set
         let { email,  password } = req.body;
         
         if (!(email && password)) {
             res.status(400).send();
         }
 
-        const user_filter = { email };
-        UserService.filterUser(user_filter, (err: any, user_data: IUser) => {
-            if (err) {
-                mongoError(err, res);
-            } else {
-                if(user_data) {
-                    if(!UserService.isPasswordValid(password, user_data.password)) {
-                        res.status(401).send();
-                    }
-    
-                    const token = jwt.sign({
-                        userId: user_data._id,
-                        username: user_data.email
-                    },
-                    process.env.SECRET ?? '', {
-                        expiresIn: "1h"
-                    });
-    
-                    res.status(200).send({token});
-                } else {
-                    res.status(404).send();
-                }                
+        const userFilter = { email };
+
+        try {
+            
+            const user = await UserService.find(userFilter);
+
+            if(!UserService.isPasswordValid(password, user.password)) {
+                res.status(401).send();
             }
-        });
+
+            const token = jwt.sign(
+                {
+                    userId: user._id,
+                    username: user.email
+                },
+                process.env.SECRET ?? '', {
+                    expiresIn: "1h"
+                }
+            );
+
+            res.status(200).send({token});
+                           
+        } catch (error) {
+            console.log('error', error.message)
+            res.status(400).send({
+                error: true,
+                message: error.message ?? 'Erro'
+            })
+        }
     };
 
     static signUp = async (req: Request, res: Response) => {
-        const user_params: IUser = {
+        const userParams: IUser = {
             name: {
                 first_name: req.body.name.first_name,
                 middle_name: req.body.name.middle_name,
@@ -57,13 +61,11 @@ class AuthController {
             }]
         };
 
-        user_params.password = UserService.hashPassword(user_params.password)
+        userParams.password = UserService.hashPassword(userParams.password)
 
         try {
-            const newUser = await UserService.createUser(user_params)
-
-            successResponse('create user successfull (async)', newUser, res);
-
+            const data = await UserService.create(userParams)
+            res.status(201).send({ message: 'User created!', data})
         } catch (error) {
             console.log('error', error)
             res.status(500).send({

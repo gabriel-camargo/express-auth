@@ -32,46 +32,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jwt = __importStar(require("jsonwebtoken"));
-const service_1 = require("./../modules/common/service");
-const service_2 = __importDefault(require("./../modules/users/service"));
+const service_1 = __importDefault(require("./../modules/users/service"));
 class AuthController {
     static dashboard(req, res) {
         res.status(200).send({ 'message': 'welcome@' });
     }
 }
 AuthController.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    //Check if username and password are set
+    var _a, _b;
     let { email, password } = req.body;
     if (!(email && password)) {
         res.status(400).send();
     }
-    const user_filter = { email };
-    service_2.default.filterUser(user_filter, (err, user_data) => {
-        var _a;
-        if (err) {
-            service_1.mongoError(err, res);
+    const userFilter = { email };
+    try {
+        const user = yield service_1.default.find(userFilter);
+        if (!service_1.default.isPasswordValid(password, user.password)) {
+            res.status(401).send();
         }
-        else {
-            if (user_data) {
-                if (!service_2.default.isPasswordValid(password, user_data.password)) {
-                    res.status(401).send();
-                }
-                const token = jwt.sign({
-                    userId: user_data._id,
-                    username: user_data.email
-                }, (_a = process.env.SECRET) !== null && _a !== void 0 ? _a : '', {
-                    expiresIn: "1h"
-                });
-                res.status(200).send({ token });
-            }
-            else {
-                res.status(404).send();
-            }
-        }
-    });
+        const token = jwt.sign({
+            userId: user._id,
+            username: user.email
+        }, (_a = process.env.SECRET) !== null && _a !== void 0 ? _a : '', {
+            expiresIn: "1h"
+        });
+        res.status(200).send({ token });
+    }
+    catch (error) {
+        console.log('error', error.message);
+        res.status(400).send({
+            error: true,
+            message: (_b = error.message) !== null && _b !== void 0 ? _b : 'Erro'
+        });
+    }
 });
 AuthController.signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user_params = {
+    const userParams = {
         name: {
             first_name: req.body.name.first_name,
             middle_name: req.body.name.middle_name,
@@ -84,10 +80,10 @@ AuthController.signUp = (req, res) => __awaiter(void 0, void 0, void 0, function
                 modification_note: 'New user created'
             }]
     };
-    user_params.password = service_2.default.hashPassword(user_params.password);
+    userParams.password = service_1.default.hashPassword(userParams.password);
     try {
-        const newUser = yield service_2.default.createUser(user_params);
-        service_1.successResponse('create user successfull (async)', newUser, res);
+        const data = yield service_1.default.create(userParams);
+        res.status(201).send({ message: 'User created!', data });
     }
     catch (error) {
         console.log('error', error);

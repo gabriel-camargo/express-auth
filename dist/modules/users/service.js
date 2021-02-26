@@ -34,29 +34,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const schema_1 = __importDefault(require("./schema"));
 const bcrypt = __importStar(require("bcryptjs"));
 class UserService {
-    static createUser(user_params) {
+    static create(userParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const session = new schema_1.default(user_params);
-            const user = yield session.save();
+            const document = new schema_1.default(userParams);
+            const user = yield document.save();
             return user;
+        });
+    }
+    static find(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const document = yield schema_1.default.findOne(query);
+            if (!document) {
+                throw new Error("Usuário não encontrado");
+            }
+            return document;
         });
     }
     static hashPassword(password) {
         return bcrypt.hashSync(password, 8);
     }
-    static filterUser(query, callback) {
-        schema_1.default.findOne(query, callback);
-    }
     static isPasswordValid(password, hash) {
         return bcrypt.compareSync(password, hash);
     }
-    updateUser(user_params, callback) {
-        const query = { _id: user_params._id };
-        schema_1.default.findOneAndUpdate(query, user_params, callback);
+    updateUser(id, user_params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = { _id: id };
+            const document = yield schema_1.default.findOneAndUpdate(query, user_params);
+            return document;
+        });
     }
-    deleteUser(_id, callback) {
-        const query = { _id: _id };
-        schema_1.default.deleteOne(query, callback);
+    deleteUser(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = { _id: id };
+            yield schema_1.default.deleteOne(query);
+        });
     }
 }
 exports.default = UserService;

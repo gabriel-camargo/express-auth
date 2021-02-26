@@ -1,3 +1,4 @@
+import { Document } from "mongoose";
 import { ModificationNote } from "../common/model";
 
 export interface IUser {
@@ -12,3 +13,5 @@ export interface IUser {
     is_deleted?: boolean;
     modification_notes: ModificationNote[]
 }
+
+export type UserDocument = IUser & Document
