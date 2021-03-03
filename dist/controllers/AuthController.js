@@ -35,7 +35,7 @@ const jwt = __importStar(require("jsonwebtoken"));
 const service_1 = __importDefault(require("./../modules/users/service"));
 class AuthController {
     static dashboard(req, res) {
-        res.status(200).send({ 'message': 'welcome@' });
+        res.status(200).send({ 'message': 'welcome' });
     }
 }
 AuthController.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

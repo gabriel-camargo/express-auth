@@ -3,7 +3,6 @@ import {
     Response
 } from "express";
 import * as jwt from "jsonwebtoken";
-import { mongoError } from "./../modules/common/service";
 import { IUser } from "./../modules/users/model";
 import UserService from "./../modules/users/service";
 
@@ -18,7 +17,6 @@ class AuthController {
         const userFilter = { email };
 
         try {
-            
             const user = await UserService.find(userFilter);
 
             if(!UserService.isPasswordValid(password, user.password)) {
@@ -47,6 +45,7 @@ class AuthController {
     };
 
     static signUp = async (req: Request, res: Response) => {
+
         const userParams: IUser = {
             name: {
                 first_name: req.body.name.first_name,
@@ -76,7 +75,8 @@ class AuthController {
     };
 
     static dashboard(req: Request, res: Response) {
-        res.status(200).send({ 'message': 'welcome@'})
+        res.status(200).send({ 'message': 'welcome'})
     }
 }
+
 export default AuthController;
