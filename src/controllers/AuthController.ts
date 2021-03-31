@@ -7,8 +7,8 @@ import { IUser } from "./../modules/users/model";
 import UserService from "./../modules/users/service";
 
 class AuthController {
-    static signIn = async (req: Request, res: Response) => {
-        let { email,  password } = req.body;
+    async signIn (req: Request, res: Response) {
+        const { email,  password } = req.body;
         
         if (!(email && password)) {
             res.status(400).send();
@@ -20,7 +20,7 @@ class AuthController {
             const user = await UserService.find(userFilter);
 
             if(!UserService.isPasswordValid(password, user.password)) {
-                res.status(401).send();
+                return res.status(401).send();
             }
 
             const token = jwt.sign(
@@ -44,7 +44,7 @@ class AuthController {
         }
     };
 
-    static signUp = async (req: Request, res: Response) => {
+    async signUp (req: Request, res: Response) {
 
         const userParams: IUser = {
             name: {
@@ -74,9 +74,9 @@ class AuthController {
         }
     };
 
-    static dashboard(req: Request, res: Response) {
+    dashboard(req: Request, res: Response) {
         res.status(200).send({ 'message': 'welcome'})
     }
 }
 
-export default AuthController;
+export default new AuthController();

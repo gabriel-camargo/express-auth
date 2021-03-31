@@ -5,14 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRouter = void 0;
 const AuthController_1 = __importDefault(require("./../controllers/AuthController"));
-const auth_1 = require("../middlewares/auth");
-const requestValidator_1 = require("../middlewares/requestValidator");
-const auth_2 = require("../validators/auth");
+const AuthMiddleware_1 = __importDefault(require("../middlewares/AuthMiddleware"));
+const RequestValidatorMiddleware_1 = __importDefault(require("../middlewares/RequestValidatorMiddleware"));
+const AuthValidator_1 = __importDefault(require("../validators/AuthValidator"));
 class AuthRoutes {
     route(app) {
-        app.post("/sign-in", requestValidator_1.validate(auth_2.signIn()), AuthController_1.default.signIn);
-        app.post("/sign-up", requestValidator_1.validate(auth_2.signUp()), AuthController_1.default.signUp);
-        app.get('/dashbord', auth_1.checkJwt, AuthController_1.default.dashboard);
+        app.post("/sign-in", RequestValidatorMiddleware_1.default.validate(AuthValidator_1.default.signIn()), AuthController_1.default.signIn);
+        app.post("/sign-up", RequestValidatorMiddleware_1.default.validate(AuthValidator_1.default.signUp()), AuthController_1.default.signUp);
+        app.get('/dashbord', AuthMiddleware_1.default.checkJwt, AuthController_1.default.dashboard);
     }
 }
 exports.authRouter = new AuthRoutes();
