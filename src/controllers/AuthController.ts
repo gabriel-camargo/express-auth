@@ -25,8 +25,7 @@ class AuthController {
 
             const token = jwt.sign(
                 {
-                    userId: user._id,
-                    username: user.email
+                    user
                 },
                 process.env.SECRET ?? '', {
                     expiresIn: "1h"
@@ -75,7 +74,10 @@ class AuthController {
     };
 
     dashboard(req: Request, res: Response) {
-        res.status(200).send({ 'message': 'welcome'})
+
+        res.status(200).send({
+            'message': `Boas vindas ${res.locals.user.name.first_name} ${res.locals.user.name.last_name}!`
+        })
     }
 }
 

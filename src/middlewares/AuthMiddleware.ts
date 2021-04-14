@@ -11,7 +11,11 @@ class AuthMiddleware {
         
         try {
             jwtPayload = <any> jwt.verify(token, jwtSecret);
-            res.locals.jwtPayload = jwtPayload;
+            res.locals.user = {
+                _id : jwtPayload.user._id,
+                name : jwtPayload.user.name,
+                email : jwtPayload.user.email,
+            };
         } catch (error) {
             res.status(401).send();
             return;
